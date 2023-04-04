@@ -1,0 +1,19 @@
+
+.page-error {
+  position: absolute;
+  top: 15%;
+  left: 35%;
+  text-align: center;
+}
+
+.error-page_img {
+  height: 500px;
+}
+
+.error-to-main {
+  background-color: rgb(133, 215, 242);
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 15px;
+  font-size: 1.5em;
+}
