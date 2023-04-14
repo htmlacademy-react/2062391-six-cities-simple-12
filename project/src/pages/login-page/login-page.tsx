@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function LoginPage () {
+function LoginPage (): JSX.Element {
   return (
     <div className="page page--gray page--login">
 

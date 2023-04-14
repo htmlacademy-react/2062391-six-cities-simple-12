@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './styles.css';
 
 
-function ErrorPage () {
+function ErrorPage (): JSX.Element {
   return (
     <div className="page-error">
       <img className="error-page_img" src="img/error-page.png" alt="404 page"/>
