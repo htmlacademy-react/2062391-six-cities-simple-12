@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
-import { Offer } from '../../types/types';
+import { Offer, Point } from '../../types/types';
 import { CITIES } from '../../constants/constants';
+import { points } from '../../mocks/points';
+import Map from '../../components/map/map';
 import PlaceCardList from '../../components/place-card-list/place-card-list';
 
 type MainPageProps = {
@@ -11,6 +14,8 @@ type MainPageProps = {
 
 
 function MainPage ({placesCount, offers}: MainPageProps): JSX.Element {
+  const [selectedPoint, setSelectedPoint] = useState<Point | undefined>();
+
   return (
     <main className="page__main page__main--index">
       <h1 className="visually-hidden">Cities</h1>
@@ -20,9 +25,9 @@ function MainPage ({placesCount, offers}: MainPageProps): JSX.Element {
 
             {
               CITIES.map((city) => (
-                <li className="locations__item" key={city}>
-                  <Link className={`locations__item-link tabs__item ${city === 'Paris' ? 'tabs__item--active' : ''}`} to="/">
-                    <span>{city}</span>
+                <li className="locations__item" key={city.title}>
+                  <Link className={`locations__item-link tabs__item ${city.title === 'Paris' ? 'tabs__item--active' : ''}`} to="/">
+                    <span>{city.title}</span>
                   </Link>
                 </li>
               ))
@@ -53,12 +58,12 @@ function MainPage ({placesCount, offers}: MainPageProps): JSX.Element {
             </form>
             <div className="cities__places-list places__list tabs__content">
 
-              <PlaceCardList offers={offers} />
+              <PlaceCardList offers={offers} changeSelectPoint={(evt) => setSelectedPoint(evt)} />
 
             </div>
           </section>
           <div className="cities__right-section">
-            <section className="cities__map map"></section>
+            <Map city={CITIES[3]} points={points} selectedPoint={selectedPoint}/>
           </div>
         </div>
       </div>
