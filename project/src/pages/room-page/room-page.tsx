@@ -1,17 +1,24 @@
 import { useParams, Link } from 'react-router-dom';
 
-import { Offer, Review } from '../../types/types';
+import Map from '../../components/map/map';
+import { points } from '../../mocks/points';
 import ErrorPage from '../error-page/error-page';
+import { Offer, Review, Point } from '../../types/types';
+import { CITIES } from '../../constants/constants';
+import ReviewsList from '../../components/reviews-list/reviews-list';
 import CommentForm from '../../components/comment-form/comment-form';
 
 type RoomPageProps = {
   offers: Offer[];
   reviews: Review[];
+  selectedPoint: Point | undefined;
 }
 
-function RoomPage ({offers, reviews}: RoomPageProps): JSX.Element {
+function RoomPage ({offers, reviews, selectedPoint}: RoomPageProps): JSX.Element {
   const path = useParams();
   const pageOffer = offers.find((offer) => (String(offer.id) === String(path.id)));
+
+  const isMain = false;
 
   if (pageOffer === undefined) {
     return (
@@ -106,34 +113,9 @@ function RoomPage ({offers, reviews}: RoomPageProps): JSX.Element {
               <section className="property__reviews reviews">
                 <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{reviews.length > 0 ? reviews.length : 'Оставь первый отзыв!'}</span></h2>
                 <ul className="reviews__list">
-                  {
-                    reviews.slice(0, 10).map((review) => (
 
-                      <li key={review.id} className="reviews__item">
-                        <div className="reviews__user user">
-                          <div className="reviews__avatar-wrapper user__avatar-wrapper">
-                            <img className="reviews__avatar user__avatar" src={review.authorUrl} width="54" height="54" alt="Reviews avatar"/>
-                          </div>
-                          <span className="reviews__user-name">
-                            {review.authorName}
-                          </span>
-                        </div>
-                        <div className="reviews__info">
-                          <div className="reviews__rating rating">
-                            <div className="reviews__stars rating__stars">
-                              <span style={{width: `${review.authorRatting}%`}}></span>
-                              <span className="visually-hidden">Rating</span>
-                            </div>
-                          </div>
-                          <p className="reviews__text">
-                            {review.text}
-                          </p>
-                          <time className="reviews__time" dateTime={`${review.date.toDateString()}`}>{review.date.toDateString()}</time>
-                        </div>
-                      </li>
-                    ))
+                  <ReviewsList reviews={reviews}/>
 
-                  }
                 </ul>
 
                 <CommentForm />
@@ -141,7 +123,9 @@ function RoomPage ({offers, reviews}: RoomPageProps): JSX.Element {
               </section>
             </div>
           </div>
-          <section className="property__map map"></section>
+          {/* <section className="property__map map"></section> */}
+          <Map city={CITIES[3]} points={points} selectedPoint={selectedPoint} isMain={isMain} />
+
         </section>
         <div className="container">
           <section className="near-places places">

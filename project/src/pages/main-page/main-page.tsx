@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 
 import { Offer, Point } from '../../types/types';
 import { CITIES } from '../../constants/constants';
@@ -10,11 +9,13 @@ import PlaceCardList from '../../components/place-card-list/place-card-list';
 type MainPageProps = {
   placesCount: number;
   offers: Offer[];
+  selectedPoint:Point | undefined;
+  changeSelectPoint:(point: Point | undefined) => void;
 }
 
 
-function MainPage ({placesCount, offers}: MainPageProps): JSX.Element {
-  const [selectedPoint, setSelectedPoint] = useState<Point | undefined>();
+function MainPage ({placesCount, offers, changeSelectPoint, selectedPoint}: MainPageProps): JSX.Element {
+  const isMain = true;
 
   return (
     <main className="page__main page__main--index">
@@ -58,12 +59,14 @@ function MainPage ({placesCount, offers}: MainPageProps): JSX.Element {
             </form>
             <div className="cities__places-list places__list tabs__content">
 
-              <PlaceCardList offers={offers} changeSelectPoint={(evt) => setSelectedPoint(evt)} />
+              <PlaceCardList offers={offers} changeSelectPoint={changeSelectPoint} />
 
             </div>
           </section>
           <div className="cities__right-section">
-            <Map city={CITIES[3]} points={points} selectedPoint={selectedPoint}/>
+
+            <Map city={CITIES[3]} points={points} selectedPoint={selectedPoint} isMain={isMain}/>
+
           </div>
         </div>
       </div>
