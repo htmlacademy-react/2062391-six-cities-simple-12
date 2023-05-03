@@ -11,7 +11,7 @@ import 'leaflet/dist/leaflet.css';
 type MapProps = {
   city: City;
   points: Point[];
-  selectedPoint: Point | undefined;
+  selectedPoint: string | undefined;
   isMain: boolean;
 }
 
@@ -28,6 +28,8 @@ const currentCustomIcon = new Icon({
   iconAnchor: [20, 40],
 });
 
+const markers: Marker[] = [];
+
 function Map ({city, points, selectedPoint, isMain}: MapProps): JSX.Element{
   const mapRef = useRef(null);
   const map = useMap(mapRef, city);
@@ -35,6 +37,8 @@ function Map ({city, points, selectedPoint, isMain}: MapProps): JSX.Element{
 
   useEffect(() => {
     if (map) {
+      map.panTo([city.lat, city.lng]);
+
       points.forEach((point) => {
         const marker = new Marker({
           lat: point.lat,
@@ -42,17 +46,26 @@ function Map ({city, points, selectedPoint, isMain}: MapProps): JSX.Element{
         });
 
         marker.setIcon(
-          selectedPoint !== undefined && point.title === selectedPoint.title
+          selectedPoint !== undefined && point.id === selectedPoint
             ? currentCustomIcon
             : defaultCustomIcon
         )
           .addTo(map);
+
+        markers.push(marker);
       });
+      return () => {
+        for (const marker of markers) {
+          marker.removeFrom(map);
+        }
+      };
     }
-  }, [map, points, selectedPoint]);
+  }, [map, points, selectedPoint, city]);
 
   return(
+
     <section className={`${isMain ? 'cities__map map' : 'property__map map'}`} ref={mapRef} ></section>
+
   );
 }
 

@@ -1,21 +1,47 @@
 import { Link } from 'react-router-dom';
 
-import { Offer, Point } from '../../types/types';
+import { City, Offer } from '../../types/types';
 import { CITIES } from '../../constants/constants';
-import { points } from '../../mocks/points';
 import Map from '../../components/map/map';
 import PlaceCardList from '../../components/place-card-list/place-card-list';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { setCityState, setOffersState } from '../../store/actions';
+import { useEffect, useState } from 'react';
 
 type MainPageProps = {
-  placesCount: number;
   offers: Offer[];
-  selectedPoint:Point | undefined;
-  changeSelectPoint:(point: Point | undefined) => void;
+  selectedPoint: string | undefined;
+  onMouseOver: (evt: React.MouseEvent<HTMLElement>) => void;
+  onMouseLeave: (evt: React.MouseEvent<HTMLElement>) => void;
 }
 
+const getCurrentCityOffers = (currentCityName: string, items: Offer[]) => items.filter((item) => item.city.name === currentCityName);
 
-function MainPage ({placesCount, offers, changeSelectPoint, selectedPoint}: MainPageProps): JSX.Element {
+function MainPage ({ offers, onMouseOver, onMouseLeave, selectedPoint}: MainPageProps): JSX.Element {
   const isMain = true;
+
+  const [selectedCityOffers, setSelectedOffers] = useState<Offer[]>([]);
+
+  const currentCity: City = useAppSelector((state) => state.city);
+  const currentOffers = useAppSelector((state) => state.offersCards);
+  const dispatch = useAppDispatch();
+
+  const points = selectedCityOffers.map((offer) => ({
+    id: offer.id,
+    lat: offer.location.lat,
+    lng: offer.location.lng,
+  }));
+
+
+  useEffect(() => {
+    dispatch(setOffersState(offers));
+  }, [dispatch, offers]);
+
+  useEffect(() => {
+    const currentCityOffers = getCurrentCityOffers(currentCity.title, currentOffers);
+    setSelectedOffers(currentCityOffers);
+  }, [currentOffers, currentCity.title]);
+
 
   return (
     <main className="page__main page__main--index">
@@ -26,8 +52,8 @@ function MainPage ({placesCount, offers, changeSelectPoint, selectedPoint}: Main
 
             {
               CITIES.map((city) => (
-                <li className="locations__item" key={city.title}>
-                  <Link className={`locations__item-link tabs__item ${city.title === 'Paris' ? 'tabs__item--active' : ''}`} to="/">
+                <li className="locations__item" key={city.title} onClick={(evt) => dispatch(setCityState(CITIES.find((selectedCity) => selectedCity.title === evt.currentTarget.textContent) as City))} >
+                  <Link className={`locations__item-link tabs__item ${city.title === currentCity.title ? 'tabs__item--active' : ''}`} to="/">
                     <span>{city.title}</span>
                   </Link>
                 </li>
@@ -41,7 +67,7 @@ function MainPage ({placesCount, offers, changeSelectPoint, selectedPoint}: Main
         <div className="cities__places-container container">
           <section className="cities__places places">
             <h2 className="visually-hidden">Places</h2>
-            <b className="places__found">{ placesCount } places to stay in Amsterdam</b>
+            <b className="places__found">{ selectedCityOffers.length } {selectedCityOffers.length > 1 ? 'places' : 'place'} to stay in {currentCity.title}</b>
             <form className="places__sorting" action="#" method="get">
               <span className="places__sorting-caption">Sort by</span>
               <span className="places__sorting-type" tabIndex={0}>
@@ -59,13 +85,13 @@ function MainPage ({placesCount, offers, changeSelectPoint, selectedPoint}: Main
             </form>
             <div className="cities__places-list places__list tabs__content">
 
-              <PlaceCardList offers={offers} changeSelectPoint={changeSelectPoint} />
+              <PlaceCardList offers={selectedCityOffers} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave} />
 
             </div>
           </section>
           <div className="cities__right-section">
 
-            <Map city={CITIES[3]} points={points} selectedPoint={selectedPoint} isMain={isMain}/>
+            <Map city={currentCity} points={points} selectedPoint={selectedPoint} isMain={isMain}/>
 
           </div>
         </div>

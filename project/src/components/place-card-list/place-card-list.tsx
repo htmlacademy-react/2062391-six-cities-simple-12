@@ -1,24 +1,20 @@
-import { useState } from 'react';
-import { Offer, Point } from '../../types/types';
+
+import { Offer } from '../../types/types';
 import PlaceCard from '../place-card/place-card';
 
 type PlaceCardListProps = {
   offers: Offer[];
-  changeSelectPoint: (point: Point | undefined) => void;
+  onMouseOver: (evt: React.MouseEvent<HTMLElement>) => void;
+  onMouseLeave: (evt: React.MouseEvent<HTMLElement>) => void;
 }
 
-function PlaceCardList ({offers, changeSelectPoint}: PlaceCardListProps): JSX.Element {
-  const [, setActiveCard ] = useState({});
-
-  const onMouseOverHandler = (evt: React.MouseEvent<HTMLElement>) => {
-    setActiveCard(evt.currentTarget);
-  };
+function PlaceCardList ({offers, onMouseOver, onMouseLeave}: PlaceCardListProps): JSX.Element {
 
   return(
     <>
       {
         offers.map((offer) => (
-          <PlaceCard key={offer.id} offer={offer} onMouseOver={onMouseOverHandler}/>
+          <PlaceCard key={offer.id} offer={offer} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave} />
         ))
       }
     </>
