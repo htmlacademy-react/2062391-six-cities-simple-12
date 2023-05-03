@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import Map from '../../components/map/map';
 import { points } from '../../mocks/points';
 import ErrorPage from '../error-page/error-page';
-import { Offer, Review, Point } from '../../types/types';
+import { Offer, Review } from '../../types/types';
 import { CITIES } from '../../constants/constants';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import CommentForm from '../../components/comment-form/comment-form';
@@ -11,7 +11,7 @@ import CommentForm from '../../components/comment-form/comment-form';
 type RoomPageProps = {
   offers: Offer[];
   reviews: Review[];
-  selectedPoint: Point | undefined;
+  selectedPoint: string | undefined;
 }
 
 function RoomPage ({offers, reviews, selectedPoint}: RoomPageProps): JSX.Element {
