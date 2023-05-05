@@ -1,20 +1,22 @@
 import { Link } from 'react-router-dom';
 
 import { Offer } from '../../types/types';
+import { setSelectedCityState } from '../../store/actions';
+import { useAppDispatch } from '../../hooks';
 
 
 type PlaceCardProps = {
   offer: Offer;
-  onMouseOver: (evt: React.MouseEvent<HTMLElement>) => void;
-  onMouseLeave: (evt: React.MouseEvent<HTMLElement>) => void;
   };
 
 
-function PlaceCard ({offer, onMouseOver, onMouseLeave }: PlaceCardProps): JSX.Element {
+function PlaceCard ({offer }: PlaceCardProps): JSX.Element {
   const { title, images, price, ratting, type, isPremium, id } = offer;
 
+  const dispatch = useAppDispatch();
+
   return (
-    <article id={id} className="cities__card place-card" onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
+    <article id={id} className="cities__card place-card" onMouseOver={(evt) => dispatch(setSelectedCityState(evt.currentTarget.id))} onMouseLeave={() => dispatch(setSelectedCityState(''))}>
       { isPremium &&
       <div className="place-card__mark">
         <span>Premium</span>

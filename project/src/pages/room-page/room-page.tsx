@@ -1,24 +1,36 @@
 import { useParams, Link } from 'react-router-dom';
 
 import Map from '../../components/map/map';
-import { points } from '../../mocks/points';
 import ErrorPage from '../error-page/error-page';
 import { Offer, Review } from '../../types/types';
-import { CITIES } from '../../constants/constants';
+import { useAppSelector, useAppDispatch } from '../../hooks';
+import { setSelectedCityState } from '../../store/actions';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import CommentForm from '../../components/comment-form/comment-form';
 
 type RoomPageProps = {
   offers: Offer[];
   reviews: Review[];
-  selectedPoint: string | undefined;
 }
 
-function RoomPage ({offers, reviews, selectedPoint}: RoomPageProps): JSX.Element {
+function RoomPage ({offers, reviews}: RoomPageProps): JSX.Element {
   const path = useParams();
   const pageOffer = offers.find((offer) => (String(offer.id) === String(path.id)));
 
   const isMain = false;
+
+  const selectedCityOffers = useAppSelector((state) => state.setSelectedOffersState);
+
+  const points = selectedCityOffers.map((offer: Offer) => ({
+    id: offer.id,
+    lat: offer.location.lat,
+    lng: offer.location.lng,
+  }));
+
+  const currentCity = useAppSelector((state) => state.city);
+
+  const dispatch = useAppDispatch();
+
 
   if (pageOffer === undefined) {
     return (
@@ -124,7 +136,7 @@ function RoomPage ({offers, reviews, selectedPoint}: RoomPageProps): JSX.Element
             </div>
           </div>
           {/* <section className="property__map map"></section> */}
-          <Map city={CITIES[3]} points={points} selectedPoint={selectedPoint} isMain={isMain} />
+          <Map city={currentCity} points={points} isMain={isMain} />
 
         </section>
         <div className="container">
@@ -135,7 +147,7 @@ function RoomPage ({offers, reviews, selectedPoint}: RoomPageProps): JSX.Element
               {
                 offers.slice(0, 4).map((offer: Offer) => ( offer.id !== pageOffer.id ) &&
 
-                  <article className="near-places__card place-card" key={offer.id}>
+                  <article className="near-places__card place-card" key={offer.id} onMouseOver={(evt) => dispatch(setSelectedCityState(evt.currentTarget.id))} onMouseLeave={() => dispatch(setSelectedCityState(''))}>
                     <div className="near-places__image-wrapper place-card__image-wrapper">
                       <Link to={`/offer/${offer.id}`} >
                         <img className="place-card__image" src={offer.images[0]} width="260" height="200" alt="Фото объекта"/>

@@ -1,37 +1,42 @@
 import { Link } from 'react-router-dom';
 
-import { City, Offer } from '../../types/types';
-import { CITIES } from '../../constants/constants';
-import Map from '../../components/map/map';
-import PlaceCardList from '../../components/place-card-list/place-card-list';
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { setCityState, setOffersState } from '../../store/actions';
 import { useEffect, useState } from 'react';
+import Map from '../../components/map/map';
+import { City, Offer } from '../../types/types';
+import { CITIES, SORT_MENU_ITEMS } from '../../constants/constants';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import PlaceCardList from '../../components/place-card-list/place-card-list';
+import OffersSortingMenu from '../../components/offers-sorting-menu/offers-sorting-menu';
+import {
+  setCityState,
+  setOffersState,
+  setSelectedOffersState
+} from '../../store/actions';
+import { sortOffers } from '../../comon/sorting';
 
 type MainPageProps = {
   offers: Offer[];
-  selectedPoint: string | undefined;
-  onMouseOver: (evt: React.MouseEvent<HTMLElement>) => void;
-  onMouseLeave: (evt: React.MouseEvent<HTMLElement>) => void;
 }
 
 const getCurrentCityOffers = (currentCityName: string, items: Offer[]) => items.filter((item) => item.city.name === currentCityName);
 
-function MainPage ({ offers, onMouseOver, onMouseLeave, selectedPoint}: MainPageProps): JSX.Element {
+function MainPage ({ offers }: MainPageProps): JSX.Element {
   const isMain = true;
 
-  const [selectedCityOffers, setSelectedOffers] = useState<Offer[]>([]);
-
-  const currentCity: City = useAppSelector((state) => state.city);
+  const currentCity = useAppSelector((state) => state.city);
   const currentOffers = useAppSelector((state) => state.offersCards);
+  const selectedCityOffers = useAppSelector((state) => state.setSelectedOffersState);
   const dispatch = useAppDispatch();
 
-  const points = selectedCityOffers.map((offer) => ({
+  const points = selectedCityOffers.map((offer: Offer) => ({
     id: offer.id,
     lat: offer.location.lat,
     lng: offer.location.lng,
   }));
 
+  const [activeSortItem, setActiveSortItem] = useState(SORT_MENU_ITEMS.Default);
+
+  const sortedCityOffers = sortOffers(selectedCityOffers, activeSortItem);
 
   useEffect(() => {
     dispatch(setOffersState(offers));
@@ -39,8 +44,8 @@ function MainPage ({ offers, onMouseOver, onMouseLeave, selectedPoint}: MainPage
 
   useEffect(() => {
     const currentCityOffers = getCurrentCityOffers(currentCity.title, currentOffers);
-    setSelectedOffers(currentCityOffers);
-  }, [currentOffers, currentCity.title]);
+    dispatch(setSelectedOffersState(currentCityOffers));
+  }, [dispatch, currentOffers, currentCity.title]);
 
 
   return (
@@ -52,7 +57,7 @@ function MainPage ({ offers, onMouseOver, onMouseLeave, selectedPoint}: MainPage
 
             {
               CITIES.map((city) => (
-                <li className="locations__item" key={city.title} onClick={(evt) => dispatch(setCityState(CITIES.find((selectedCity) => selectedCity.title === evt.currentTarget.textContent) as City))} >
+                <li className="locations__item" key={city.title} onClick={(evt) => dispatch(setCityState(CITIES.find((el) => el.title === evt.currentTarget.textContent) as City))} >
                   <Link className={`locations__item-link tabs__item ${city.title === currentCity.title ? 'tabs__item--active' : ''}`} to="/">
                     <span>{city.title}</span>
                   </Link>
@@ -68,30 +73,16 @@ function MainPage ({ offers, onMouseOver, onMouseLeave, selectedPoint}: MainPage
           <section className="cities__places places">
             <h2 className="visually-hidden">Places</h2>
             <b className="places__found">{ selectedCityOffers.length } {selectedCityOffers.length > 1 ? 'places' : 'place'} to stay in {currentCity.title}</b>
-            <form className="places__sorting" action="#" method="get">
-              <span className="places__sorting-caption">Sort by</span>
-              <span className="places__sorting-type" tabIndex={0}>
-                Popular
-                <svg className="places__sorting-arrow" width="7" height="4">
-                  <use xlinkHref="#icon-arrow-select"></use>
-                </svg>
-              </span>
-              <ul className="places__options places__options--custom places__options--opened">
-                <li className="places__option places__option--active" tabIndex={0}>Popular</li>
-                <li className="places__option" tabIndex={0}>Price: low to high</li>
-                <li className="places__option" tabIndex={0}>Price: high to low</li>
-                <li className="places__option" tabIndex={0}>Top rated first</li>
-              </ul>
-            </form>
+            <OffersSortingMenu setActiveSortItem={setActiveSortItem} />
             <div className="cities__places-list places__list tabs__content">
 
-              <PlaceCardList offers={selectedCityOffers} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave} />
+              <PlaceCardList offers={sortedCityOffers} />
 
             </div>
           </section>
           <div className="cities__right-section">
 
-            <Map city={currentCity} points={points} selectedPoint={selectedPoint} isMain={isMain}/>
+            <Map city={currentCity} points={points} isMain={isMain}/>
 
           </div>
         </div>
