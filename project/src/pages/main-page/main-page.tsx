@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-
 import { useEffect, useState } from 'react';
+
 import Map from '../../components/map/map';
 import { City, Offer } from '../../types/types';
-import { CITIES, SORT_MENU_ITEMS } from '../../constants/constants';
 import { useAppDispatch, useAppSelector } from '../../hooks';
+import { CITIES, SORT_MENU_ITEMS } from '../../constants/constants';
 import PlaceCardList from '../../components/place-card-list/place-card-list';
 import OffersSortingMenu from '../../components/offers-sorting-menu/offers-sorting-menu';
 import {
@@ -13,6 +13,7 @@ import {
   setSelectedOffersState
 } from '../../store/actions';
 import { sortOffers } from '../../comon/sorting';
+
 
 type MainPageProps = {
   offers: Offer[];

@@ -79,14 +79,14 @@ function RoomPage ({offers, reviews}: RoomPageProps): JSX.Element {
                   {pageOffer.type}
                 </li>
                 <li className="property__feature property__feature--bedrooms">
-                  ${pageOffer.bedrooms} {pageOffer.bedrooms > 1 ? 'Bedrooms' : 'Bedroom'}
+                  {pageOffer.bedrooms} {pageOffer.bedrooms > 1 ? 'Bedrooms' : 'Bedroom'}
                 </li>
                 <li className="property__feature property__feature--adults">
-                  Max ${pageOffer.maxGuests} {pageOffer.maxGuests > 1 ? 'adults' : 'adult'}
+                  Max {pageOffer.maxGuests} {pageOffer.maxGuests > 1 ? 'adults' : 'adult'}
                 </li>
               </ul>
               <div className="property__price">
-                <b className="property__price-value">&euro;${pageOffer.price}</b>
+                <b className="property__price-value">&euro;{pageOffer.price}</b>
                 <span className="property__price-text">&nbsp;night</span>
               </div>
               <div className="property__inside">
@@ -96,7 +96,7 @@ function RoomPage ({offers, reviews}: RoomPageProps): JSX.Element {
                   {
                     pageOffer.advantages.map((advantage) => (
                       <li className="property__inside-item" key={advantage}>
-                        ${advantage}
+                        {advantage}
                       </li>
                     ))
                   }
