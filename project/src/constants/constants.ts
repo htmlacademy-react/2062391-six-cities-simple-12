@@ -48,6 +48,13 @@ export const HOUSING_TYPES = {
   HOTEL: 'Hotel'
 } as const;
 
+export enum SORT_MENU_ITEMS {
+  Default = 'Popular',
+  LOW_TO_HIGH = 'Price: low to high',
+  HIGH_TO_LOW = 'Price: high to low',
+  TOP_RATES = 'Top rated first'
+}
+
 export const URL_MARKER_DEFAULT =
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/demo/interactive-map/pin.svg';
 

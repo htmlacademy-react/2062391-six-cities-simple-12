@@ -6,12 +6,12 @@ import { City, Point } from '../../types/types';
 
 import { URL_MARKER_CURRENT, URL_MARKER_DEFAULT } from '../../constants/constants';
 import 'leaflet/dist/leaflet.css';
+import { useAppSelector } from '../../hooks';
 
 
 type MapProps = {
   city: City;
   points: Point[];
-  selectedPoint: string | undefined;
   isMain: boolean;
 }
 
@@ -30,9 +30,11 @@ const currentCustomIcon = new Icon({
 
 const markers: Marker[] = [];
 
-function Map ({city, points, selectedPoint, isMain}: MapProps): JSX.Element{
+function Map ({city, points, isMain}: MapProps): JSX.Element{
   const mapRef = useRef(null);
   const map = useMap(mapRef, city);
+
+  const selectedPoint = useAppSelector((state) => state.selectedCity);
 
 
   useEffect(() => {
